@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Contorno de la tarjeta -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/pink"
+        android:strokeWidth="1.5"
+        android:pathData="M3,3.75
+            H21
+            C21.83,3.75 22.25,4.5 22.25,5.25
+            V18.75
+            C22.25,19.85 21.83,20.25 20.75,20.25
+            H3.25
+            C2.15,20.25 1.75,19.85 1.75,18.75
+            V5.25
+            C1.75,4.15 2.15,3.75 3,3.75Z" />
+
+    <!-- Círculo de la cabeza -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/pink"
+        android:strokeWidth="1.5"
+        android:pathData="M11.5,9.5
+            A2.5,2.5 0,1 1,6.5 9.5
+            A2.5,2.5 0,1 1,11.5 9.5Z" />
+
+    <!-- Cuerpo -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/pink"
+        android:strokeWidth="1.5"
+        android:pathData="M4.75,16.25
+            C4.75,14.75 7.1,13.5 9,13.5
+            C10.9,13.5 13.25,14.75 13.25,16.25
+            V16.5
+            H4.75Z" />
+
+    <!-- Líneas de información -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/pink"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M15,7.5 H19" />
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/pink"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M15,9.5 H19" />
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/pink"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M15,11.5 H17.5" />
+
+</vector>

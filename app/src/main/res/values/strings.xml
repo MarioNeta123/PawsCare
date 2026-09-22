@@ -1,0 +1,106 @@
+<resources>
+    <string name="app_name">PawsCare</string>
+
+    <!-- Barra inferior -->
+    <string name="inicio">Inicio</string>
+    <string name="citas">Citas</string>
+    <string name="perfil">Perfil</string>
+    <string name="estilos">Estilos</string>
+
+    <!-- Barra superior -->
+    <string name="p">P</string>
+    <string name="default_sn"><![CDATA[<screen_name>]]></string>
+
+    <!-- homeScreen -->
+    <string name="pet_message"><![CDATA[<Nombre Mascota> te extraña 🐾]]></string>
+    <string name="greeting"><![CDATA[¡Hola, <Nombre>!]]></string>
+    <string name="alerts_view">Alertas Recientes</string>
+    <string name="all_view">Ver Todo</string>
+
+    <!-- notiScreen -->
+    <string name="all">Todo</string>
+    <string name="vaccines">Vacunas</string>
+    <string name="bath">Baños\n</string>
+
+    <!-- appointmentsScreen -->
+    <string name="appointments_">Próximas Citas</string>
+    <string name="old_appointments">Citas Pasadas</string>
+
+    <!-- bathsScreen -->
+    <string name="available_services">Servicios Disponibles</string>
+    <string name="baths_">Mascotas en Servicio</string>
+
+    <!-- VaccCardScreen -->
+    <string name="pets">Mascotas</string>
+    <string name="procedures_">Últimos Procedimientos</string>
+    <string name="pending">Pedientes</string>
+
+    <!-- PorfileScreen -->
+
+
+    <!-- StylesScreen -->
+    <string name="styles">Personaliza tu App</string>
+    <string name="explain_styles">Elige un tema de colores para tu experiencia en PawsCare y dale tu propio estilo.</string>
+
+    <!-- items -->
+        <!-- Estado Cartilla -->
+    <string name="vaccination_card_state"><![CDATA[Cartilla <Estado cartilla>]]></string>
+    <string name="vaccination_card_message"><![CDATA[<Nombre_Mascota> tiene <nv_completadas> vacunas completadas y <nv_pendientes>]]></string>
+
+        <!-- Mascota -->
+    <string name="default_petn"><![CDATA[<Nombre_Mascota>]]></string>
+
+        <!-- Default item A -->
+    <string name="message_theme"><![CDATA[<Tema_Mensaje>]]></string>
+    <string name="message"><![CDATA[<Mensaje>]]></string>
+    <string name="time"><![CDATA[<tiempo>]]></string>
+
+        <!-- Duo Button -->
+    <string name="appointments">Citas Médicas</string>
+    <string name="grooming">Estética y Baño</string>
+
+        <!-- ico Button -->
+    <string name="ico_button_text"><![CDATA[<Icob_text>]]></string>
+    <string name="time_date"><![CDATA[<Fecha-Tiempo>]]></string>
+    <string name="forpet"><![CDATA[Para <Nombre Mascota>]]></string>
+
+        <!-- pet onService -->
+    <string name="pet_spa_title"><![CDATA[<Nombre_Mascota> está en el Spa]]></string>
+    <string name="service_type_label"><![CDATA[Servicio:<tipo_servicio_baño>]]></string>
+    <string name="status"><![CDATA[<Estado_Baño>]]></string>
+    <string name="drying_progress_label">Progreso del secado</string>
+    <string name="progress_percentage"><![CDATA[%<num>]]></string>
+    <string name="pet_onbath_message"><![CDATA[<Mensaje_personalizado>]]></string>
+
+        <!-- completeProcedures -->
+    <string name="procedure_treatment"><![CDATA[<Procedimiento_tratamiento>]]></string>
+    <string name="doctor"><![CDATA[<Doctor_Name>]]></string>
+
+        <!-- pet Info -->
+    <string name="breed"><![CDATA[<Raza_Mascota>]]></string>
+    <string name="age"><![CDATA[<Edad_Mascota>]]></string>
+    <string name="weight"><![CDATA[<Peso_Mascota>]]></string>
+    <string name="gender"><![CDATA[<Genero>]]></string>
+
+        <!-- styles -->
+    <string name="theme_ocean">Tema Océano</string>
+    <string name="theme_ocean_description">La calma del mar profundo. Tonos azules frescos con sutiles acentos rosa.</string>
+    <string name="theme_forest">Tema Bosque</string>
+    <string name="theme_forest_description">La frescura de la naturaleza. Verdes saludables y calidos detalles ámbar.</string>
+    <string name="theme_sunset">Tema Atardecer</string>
+    <string name="theme_sunset_description">La calidez del final del día. Anaranjados acogedores y contrastes dorados.</string>
+    <string name="active">ACTIVO</string>
+
+        <!-- userInfo -->
+    <string name="full_name">Nombre completo</string>
+    <string name="user"><![CDATA[<Nombre_Usuario>]]></string>
+    <string name="email">Email</string>
+    <string name="eMail"><![CDATA[<Correo_Usuario>]]></string>
+    <string name="phone">Teléfono</string>
+    <string name="phone_number"><![CDATA[<Numero_Usuario>]]></string>
+    <string name="address">Dirección</string>
+    <string name="user_address"><![CDATA[<Direccion_Usuario>]]></string>
+    <string name="personal_data">Datos Personales</string>
+    <string name="personal_pets">Mis Mascotas</string>
+
+</resources>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Tarjeta de perfil genérica: avatar, nombre, botón editar y datos de contacto -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@drawable/bg_rounded">
+
+    <!-- Fila superior: avatar, nombre y botón de editar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Contenedor del Avatar con indicador de edición -->
+        <FrameLayout
+            android:id="@+id/fl_avatar_container"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/img_avatar"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_circle_blue"
+                android:scaleType="centerCrop"/>
+
+            <!-- Símbolo + para indicar edición -->
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/ic_extra_add"
+                app:tint="@color/white"
+                android:background="@drawable/bg_circle_blue"
+                android:padding="4dp"
+                android:elevation="4dp"/>
+        </FrameLayout>
+
+        <!-- Nombre del usuario -->
+        <TextView
+            android:id="@+id/user"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/kanit"
+            android:text="@string/user"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/fl_avatar_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/fl_avatar_container"
+            app:layout_constraintTop_toTopOf="@id/fl_avatar_container" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

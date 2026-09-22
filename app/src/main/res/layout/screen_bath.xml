@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Pantalla de citas de baño: reserva, mascotas en servicio y servicios disponibles -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    tools:ignore="VisualLintSystemUi">
+
+    <!-- Contenido superior desplazable: encabezado, acciones de baño, mascotas en servicio y título de servicios -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/top_scroll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <!-- Encabezado de la pantalla de citas de baño -->
+            <include
+                android:id="@+id/bath_section_header"
+                layout="@layout/component_section_header" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="0dp">
+                <!-- Par de botones de acción rápida (p. ej. agendar / historial de baños) -->
+                <include
+                    android:id="@+id/duob_bath"
+                    layout="@layout/item_duo_button" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+                <!-- Botón para agregar una nueva reserva de baño -->
+                <include
+                    android:id="@+id/add_bath_reservation"
+                    layout="@layout/item_icon_button" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <!-- Título de la sección de mascotas que están en servicio de baño -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/baths_"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"/>
+
+                <!-- Permite desplazarse horizontalmente entre las mascotas en servicio -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scrollbars="none">
+
+                    <!-- Contenedor de tarjetas de mascotas actualmente en servicio de baño -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:showDividers="middle"
+                        android:divider="@drawable/divider_horizontal_10dp">
+
+                        <!-- Tarjeta de mascota en servicio -->
+                        <include
+                            android:id="@+id/pet_onService"
+                            layout="@layout/item_pet_onservice" />
+
+                        <!-- Tarjeta de mascota en servicio -->
+                        <include
+                            android:id="@+id/pet_onService_2"
+                            layout="@layout/item_pet_onservice" />
+
+                        <!-- Tarjeta de mascota en servicio -->
+                        <include
+                            android:id="@+id/pet_onService_3"
+                            layout="@layout/item_pet_onservice" />
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="10dp">
+
+                <!-- Título de la sección de servicios de baño disponibles -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/available_services"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/kanit" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Área desplazable con el listado de servicios de baño disponibles para reservar -->
+
+    <!-- Barra de navegación inferior de la app -->
+    <ScrollView
+        android:id="@+id/available_services_feed"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="24dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="24dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_scroll"
+        app:layout_constraintVertical_bias="0.037">
+
+        <!-- Contenedor de tarjetas de servicios disponibles -->
+        <LinearLayout
+            android:id="@+id/layout_available_services_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+
+            <!-- Tarjeta individual de servicio de baño disponible -->
+            <include
+                android:id="@+id/available_services_item"
+                layout="@layout/item_default_b" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <include
+        android:id="@+id/bottom_navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        layout="@layout/component_bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

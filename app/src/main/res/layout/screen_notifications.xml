@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Pantalla de notificaciones: lista de alertas filtrables por tipo -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    tools:ignore="VisualLintSystemUi">
+
+    <!-- Contenedor superior: encabezado y filtros de notificaciones -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/top_scroll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Encabezado de la pantalla de notificaciones -->
+            <include
+                layout="@layout/component_notifications_header" />
+
+            <!-- Permite desplazarse horizontalmente entre los filtros de notificaciones -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:scrollbars="none">
+
+                <!-- Contenedor horizontal de chips de filtro (todas, vacunas, baño) -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- Filtro: todas las notificaciones (seleccionado por defecto) -->
+                    <TextView
+                        android:id="@+id/tv_filter_all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:background="@drawable/bg_card_blue"
+                        android:backgroundTint="@color/light_blue"
+                        android:text="@string/all"
+                        android:textSize="11sp"
+                        android:textColor="@color/dark_blue"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/kanit" />
+
+                    <!-- Filtro: notificaciones de vacunas -->
+                    <TextView
+                        android:id="@+id/tv_filter_vaccines"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:background="@drawable/bg_card_blue"
+                        android:backgroundTint="@color/white"
+                        android:text="@string/vaccines"
+                        android:textSize="11sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/kanit" />
+
+                    <!-- Filtro: notificaciones de baño -->
+                    <TextView
+                        android:id="@+id/tv_filter_bath"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:background="@drawable/bg_card_blue"
+                        android:backgroundTint="@color/white"
+                        android:text="@string/bath"
+                        android:textSize="11sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/kanit" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Área desplazable con el listado de notificaciones según el filtro activo -->
+    <ScrollView
+        android:id="@+id/notifications_feed"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/top_scroll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintVertical_bias="0.0">
+
+        <!-- Contenedor de tarjetas de notificación -->
+        <LinearLayout
+            android:id="@+id/layout_notifications_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+
+            <!-- Tarjeta individual de notificación -->
+            <include
+                android:id="@+id/notification"
+                layout="@layout/item_default_a" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Barra de navegación inferior de la app -->
+    <include
+        android:id="@+id/bottom_navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        layout="@layout/component_bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

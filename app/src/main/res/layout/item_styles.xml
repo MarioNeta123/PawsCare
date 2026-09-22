@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rg_theme_selector"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- ========================= TEMA OCÉANO ========================= -->
+    <LinearLayout
+        android:id="@+id/theme_card_ocean"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="@drawable/bg_rounded"
+        android:backgroundTint="@color/white"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_theme_name_ocean"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_ocean"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:fontFamily="@font/kanit"/>
+
+            <TextView
+                android:id="@+id/tv_theme_active_badge_ocean"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:visibility="visible"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_rounded"
+                android:backgroundTint="@color/light_blue"
+                android:text="@string/active"
+                android:textSize="11sp"
+                android:textColor="@color/dark_blue"
+                android:textStyle="bold"
+                android:fontFamily="@font/kanit"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <RadioButton
+                android:id="@+id/rb_theme_ocean"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:buttonTint="@color/blue"
+                android:clickable="false"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/theme_ocean_description"
+            android:textSize="13sp"
+            android:textColor="@color/gray"
+            android:fontFamily="@font/kanit"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/dark_blue"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/blue"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/light_blue"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/pink"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/light_pink"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- ========================= TEMA BOSQUE ========================= -->
+    <LinearLayout
+        android:id="@+id/theme_card_forest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="@drawable/bg_rounded"
+        android:backgroundTint="@color/white"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_theme_name_forest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_forest"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:fontFamily="@font/kanit"/>
+
+            <TextView
+                android:id="@+id/tv_theme_active_badge_forest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:visibility="gone"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_rounded"
+                android:backgroundTint="@color/light_blue"
+                android:text="@string/active"
+                android:textSize="11sp"
+                android:textColor="@color/dark_blue"
+                android:textStyle="bold"
+                android:fontFamily="@font/kanit"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <RadioButton
+                android:id="@+id/rb_theme_forest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:buttonTint="@color/blue"
+                android:clickable="false"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/theme_forest_description"
+            android:textSize="13sp"
+            android:textColor="@color/gray"
+            android:fontFamily="@font/kanit"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/dark_green"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/green"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/very_light_green"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/dark_yellow"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/light_yellow"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- ========================= TEMA ATARDECER ========================= -->
+    <LinearLayout
+        android:id="@+id/theme_card_sunset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="@drawable/bg_rounded"
+        android:backgroundTint="@color/white"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_theme_name_sunset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/theme_sunset"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:fontFamily="@font/kanit"/>
+
+            <TextView
+                android:id="@+id/tv_theme_active_badge_sunset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:visibility="gone"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_rounded"
+                android:backgroundTint="@color/light_blue"
+                android:text="@string/active"
+                android:textSize="11sp"
+                android:textColor="@color/dark_blue"
+                android:textStyle="bold"
+                android:fontFamily="@font/kanit"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <RadioButton
+                android:id="@+id/rb_theme_sunset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:buttonTint="@color/blue"
+                android:clickable="false"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/theme_sunset_description"
+            android:textSize="13sp"
+            android:textColor="@color/gray"
+            android:fontFamily="@font/kanit"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/cherry_red"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/red"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/light_orange"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/dark_blue"/>
+            <View android:tag="palette" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_circle_blue" android:backgroundTint="@color/light_blue"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RadioGroup>

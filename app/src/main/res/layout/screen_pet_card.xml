@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Pantalla de cartilla: resumen de mascotas y su historial médico/vacunación -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    tools:ignore="VisualLintSystemUi">
+
+    <!-- Contenido superior desplazable: encabezado, selector de mascotas, ficha de la mascota y cartilla de procedimientos -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/top_scroll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Encabezado de la pantalla de cartilla -->
+            <include
+                android:id="@+id/vc_section_header"
+                layout="@layout/component_section_header" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="0dp">
+
+                <!-- Bloque de texto introductorio de la sección de mascotas -->
+                <LinearLayout
+                    android:id="@+id/text_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Título de la sección "Mis mascotas" -->
+                    <TextView
+                        android:id="@+id/tv_greeting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pets"
+                        android:textSize="14sp"
+                        android:textColor="@color/gray"
+                        android:fontFamily="@font/kanit" />
+
+                </LinearLayout>
+
+                <!-- Selector horizontal de mascotas para elegir de cuál ver la cartilla -->
+                <HorizontalScrollView
+                    android:id="@+id/scroll_pets_placeholder"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:scrollbars="none">
+
+                    <!-- Contenedor de las mascotas registradas -->
+                    <LinearLayout
+                        android:id="@+id/layout_pets_placeholder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <!-- Tarjeta individual de mascota (foto, nombre, raza) -->
+                        <include
+                            android:id="@+id/pet"
+                            layout="@layout/item_pet" />
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+                <!-- Ficha con la información de la mascota cuya cartilla se está mostrando (peso, sexo, edad) -->
+                <include
+                    android:id="@+id/pet_info"
+                    layout="@layout/item_pet_info"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+                <!-- Título de la sección de procedimientos/vacunas ya registrados en la cartilla -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/procedures_"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/kanit" />
+
+                <!-- Lista de procedimientos/vacunas completados en la cartilla; altura fija para mostrar ~3 tarjetas -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_complete_procedures"
+                    android:layout_width="match_parent"
+                    android:layout_height="145dp"
+                    android:layout_marginTop="12dp"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_complete_procedures" />
+
+                <!-- Separador entre procedimientos completados y pendientes -->
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"/>
+
+                <!-- Título de la sección de procedimientos/vacunas pendientes de registrar en la cartilla -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pending"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/kanit" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Lista desplazable de procedimientos/vacunas pendientes de la cartilla -->
+    <ScrollView
+        android:id="@+id/old_appointments_feed"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/top_scroll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
+
+        <!-- Contenedor de tarjetas de procedimientos/vacunas pendientes -->
+        <LinearLayout
+            android:id="@+id/layout_old_appointments_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+
+            <!-- Tarjeta de procedimiento/vacuna pendiente -->
+            <include
+                android:id="@+id/old_appointment"
+                layout="@layout/item_default_b" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Barra de navegación inferior de la app -->
+    <include
+        android:id="@+id/bottom_navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        layout="@layout/component_bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Tarjeta de información de contacto: etiqueta a la izquierda, valor alineado a la derecha -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:background="@drawable/bg_rounded">
+
+    <!-- Fila: nombre completo -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/full_name"
+            android:textSize="13sp"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit"/>
+
+        <TextView
+            android:id="@+id/user"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="@string/user"
+            android:textSize="13sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit"/>
+
+    </LinearLayout>
+
+    <!-- Separador entre nombre completo y correo electrónico -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@color/off_white"/>
+
+    <!-- Fila: correo electrónico -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/email"
+            android:textSize="13sp"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit"/>
+
+        <TextView
+            android:id="@+id/tv_user_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="@string/eMail"
+            android:textSize="13sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit"/>
+
+    </LinearLayout>
+
+    <!-- Separador entre correo electrónico y teléfono -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@color/off_white"/>
+
+    <!-- Fila: teléfono -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/phone"
+            android:textSize="13sp"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit"/>
+
+        <TextView
+            android:id="@+id/tv_user_phone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="@string/phone_number"
+            android:textSize="13sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit"/>
+
+    </LinearLayout>
+
+    <!-- Separador entre teléfono y dirección -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@color/off_white"/>
+
+    <!-- Fila: dirección -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/address"
+            android:textSize="13sp"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit"/>
+
+        <TextView
+            android:id="@+id/tv_user_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="@string/user_address"
+            android:textSize="13sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_nav"
+    android:layout_width="match_parent"
+    android:layout_height="84dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@color/white"
+    android:baselineAligned="false"
+    android:elevation="100dp"
+    android:translationZ="100dp"
+    android:clipChildren="false"
+    android:clipToPadding="false" >
+
+    <!-- ===================== INICIO ===================== -->
+    <LinearLayout
+        android:id="@+id/nav_home"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/icon_main_inicio"
+            app:tint="@color/gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/inicio"
+            android:textSize="11sp"
+            android:textColor="@color/gray"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit" />
+
+    </LinearLayout>
+
+
+    <!-- ===================== CITAS ===================== -->
+    <LinearLayout
+        android:id="@+id/nav_citas"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/icon_main_citas"
+            app:tint="@color/gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/citas"
+            android:textSize="11sp"
+            android:textColor="@color/gray"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit" />
+
+    </LinearLayout>
+
+
+    <!-- ===================== BOTÓN CENTRAL ===================== -->
+    <FrameLayout
+        android:id="@+id/nav_cartilla"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_weight="1"
+        android:translationY="-10dp">
+
+        <View
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_rounded_pink" />
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_main_cartilla"
+            app:tint="@color/pink" />
+
+    </FrameLayout>
+
+
+    <!-- ===================== PERFIL ===================== -->
+    <LinearLayout
+        android:id="@+id/nav_perfil"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/icon_main_perfil"
+            app:tint="@color/gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/perfil"
+            android:textSize="11sp"
+            android:textColor="@color/gray"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit" />
+
+    </LinearLayout>
+
+
+    <!-- ===================== ESTILOS ===================== -->
+    <LinearLayout
+        android:id="@+id/nav_estilos"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/icon_main_estilos"
+            app:tint="@color/gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/estilos"
+            android:textSize="11sp"
+            android:textColor="@color/gray"
+            android:textStyle="bold"
+            android:fontFamily="@font/kanit" />
+
+    </LinearLayout>
+
+</LinearLayout>

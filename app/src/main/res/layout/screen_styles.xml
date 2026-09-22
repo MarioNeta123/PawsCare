@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Pantalla de estilos: título, explicación, opciones de estilo y botón para aplicar -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    tools:ignore="VisualLintSystemUi">
+
+    <!-- Contenido desplazable de la pantalla de estilos; se ajusta al espacio disponible sobre la barra inferior -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/top_scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
+
+        <!-- Organiza los elementos de forma vertical -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Encabezado de la pantalla de estilos -->
+            <include
+                layout="@layout/component_header" />
+
+            <!-- Bloque de título, explicación y selector de estilos -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <!-- Agrupa el título y el texto explicativo de la sección de estilos -->
+                <LinearLayout
+                    android:id="@+id/text_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Título de la sección de estilos -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/styles"
+                        android:textSize="20sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/kanit" />
+
+                    <!-- Texto explicativo de los estilos disponibles -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/explain_styles"
+                        android:textSize="16sp"
+                        android:textColor="@color/gray"
+                        android:fontFamily="@font/kanit" />
+
+                </LinearLayout>
+
+                <!-- Contenedor desplazable de las opciones de estilo disponibles -->
+                <ScrollView
+                    android:id="@+id/scroll_styles_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:scrollbars="none">
+
+                    <!-- Contenedor de las tarjetas de estilo -->
+                    <LinearLayout
+                        android:id="@+id/layout_styles_placeholder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <!-- Tarjeta individual de opción de estilo -->
+                        <include
+                            android:id="@+id/styles"
+                            layout="@layout/item_styles" />
+
+                    </LinearLayout>
+
+                </ScrollView>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"/>
+
+                <!-- Botón para aplicar el estilo seleccionado -->
+                <include
+                    android:id="@+id/apply_style"
+                    layout="@layout/item_button" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Barra de navegación inferior de la app -->
+    <include
+        android:id="@+id/bottom_navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        layout="@layout/component_bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

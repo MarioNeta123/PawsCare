@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "170693752765",
+    "project_id": "pawscare-308fe",
+    "storage_bucket": "pawscare-308fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170693752765:android:85b2f883ce1da6e7f6c4d4",
+        "android_client_info": {
+          "package_name": "com.example.pawscare2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5Ey5l9siwhltvc3Ad51KssjQ6EPc8_Cw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
