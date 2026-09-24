@@ -1,11 +1,12 @@
 package com.example.pawscare2.model
 
-/**
- * Representa una cita programada vinculado a un usuario y mascota.
- */
+import com.google.firebase.firestore.PropertyName
+
 data class Appointment(
+    val id: String = "", // ID del documento en Firestore
     val userId: String = "",
     val petId: Long = 0,
+    val petName: String = "", // Facilita la vista para el veterinario
     val title: String = "",
     val date: String = "",
     val hour: String = "",
@@ -13,5 +14,7 @@ data class Appointment(
     val branch: String = "",
     val notes: String = "",
     val type: String = "", // "MEDICAL" o "GROOMING"
-    val isPast: Boolean = false
+    @get:PropertyName("isPast") @set:PropertyName("isPast") var isPast: Boolean = false,
+    val progress: Int = 0, // Progreso del baño (0 a 100)
+    val status: String = "PENDIENTE" // PENDIENTE, EN PROCESO, LISTO
 )
