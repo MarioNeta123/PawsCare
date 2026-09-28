@@ -25,6 +25,7 @@ import com.example.pawscare2.PawsViewModel
 import com.example.pawscare2.model.Pet
 import com.example.pawscare2.model.User
 
+// Pantalla de perfil del usuario con avatar, opción de cambiar foto y listado de mascotas
 @Composable
 fun ProfileScreen(
     user: User?,
@@ -71,7 +72,7 @@ fun ProfileScreen(
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
         item {
-            // Header del perfil con avatar
+            // Header del perfil con avatar y opción de cambiar foto
             Card(
                 shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
                 colors = CardDefaults.cardColors(containerColor = primaryColor),
@@ -86,26 +87,33 @@ fun ProfileScreen(
                     Box(
                         modifier = Modifier
                             .size(90.dp)
-                            .clip(CircleShape)
-                            .background(accentBgColor)
                             .clickable { onChangePhotoClick() },
                         contentAlignment = Alignment.Center
                     ) {
-                        if (!user?.photoUrl.isNullOrEmpty()) {
-                            AsyncImage(
-                                model = user?.photoUrl,
-                                contentDescription = "Foto de Perfil",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        } else {
-                            Text("👤", fontSize = 42.sp)
+                        Box(
+                            modifier = Modifier
+                                .size(90.dp)
+                                .clip(CircleShape)
+                                .background(accentBgColor),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (!user?.photoUrl.isNullOrEmpty()) {
+                                AsyncImage(
+                                    model = user?.photoUrl,
+                                    contentDescription = "Foto de Perfil",
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            } else {
+                                Text("👤", fontSize = 42.sp)
+                            }
                         }
 
                         Box(
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
-                                .size(28.dp)
+                                .offset(x = 4.dp, y = 4.dp)
+                                .size(30.dp)
                                 .clip(CircleShape)
                                 .background(accentColor),
                             contentAlignment = Alignment.Center
@@ -114,7 +122,14 @@ fun ProfileScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    if (!user?.photoUrl.isNullOrEmpty()) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        TextButton(onClick = { viewModel.removeProfilePhoto() }) {
+                            Text("🗑️ Quitar foto actual", color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
                         text = user?.name ?: "Usuario",

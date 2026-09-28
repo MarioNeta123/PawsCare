@@ -192,11 +192,31 @@ class MainActivity : ComponentActivity() {
                     var editAge by remember { mutableStateOf(pet.age.toString()) }
                     var editWeight by remember { mutableStateOf(pet.weight.toString()) }
 
+                    val isCustomer = user?.role != "VETERINARIAN"
+                    val hasProcedures = pet.id == selectedPet?.id && procedures.isNotEmpty()
+                    val lockCriticalFields = isCustomer && hasProcedures
+
                     AlertDialog(
                         onDismissRequest = { petToEdit = null },
                         title = { Text("Editar Datos de ${pet.name}", fontWeight = FontWeight.Bold) },
                         text = {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                if (lockCriticalFields) {
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = ComposeColor(0xFFFFF3E0)
+                                    ) {
+                                        Text(
+                                            text = "⚠️ Esta mascota ya cuenta con procedimientos médicos en su cartilla. Por continuidad clínica, no puedes modificar su especie ni su raza.",
+                                            modifier = Modifier.padding(10.dp),
+                                            fontSize = 12.sp,
+                                            color = ComposeColor(0xFFE65100),
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                }
+
                                 Text("Especie / Animal:", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -205,13 +225,20 @@ class MainActivity : ComponentActivity() {
                                     listOf("PERRO" to "🐶", "GATO" to "🐱", "AVE" to "🦜", "CONEJO" to "🐰", "HAMSTER" to "🐹").forEach { (code, emoji) ->
                                         FilterChip(
                                             selected = (editSpecies == code),
-                                            onClick = { editSpecies = code },
-                                            label = { Text(emoji, fontSize = 14.sp) }
+                                            onClick = { if (!lockCriticalFields) editSpecies = code },
+                                            label = { Text(emoji, fontSize = 14.sp) },
+                                            enabled = !lockCriticalFields
                                         )
                                     }
                                 }
                                 OutlinedTextField(value = editName, onValueChange = { editName = it }, label = { Text("Nombre") }, modifier = Modifier.fillMaxWidth())
-                                OutlinedTextField(value = editBreed, onValueChange = { editBreed = it }, label = { Text("Raza") }, modifier = Modifier.fillMaxWidth())
+                                OutlinedTextField(
+                                    value = editBreed,
+                                    onValueChange = { if (!lockCriticalFields) editBreed = it },
+                                    label = { Text("Raza") },
+                                    enabled = !lockCriticalFields,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
                                 OutlinedTextField(value = editAge, onValueChange = { editAge = it }, label = { Text("Edad (años)") }, modifier = Modifier.fillMaxWidth())
                                 OutlinedTextField(value = editWeight, onValueChange = { editWeight = it }, label = { Text("Peso (kg)") }, modifier = Modifier.fillMaxWidth())
                             }
@@ -313,7 +340,17 @@ class MainActivity : ComponentActivity() {
                     var selNotes by remember { mutableStateOf("") }
 
                     val branches = listOf("Sucursal Norte 📍", "Sucursal Sur 📍", "Sucursal Centro 📍")
-                    val doctors = listOf("Dr. García (Veterinario)", "Dra. Martínez (Especialista)")
+                    val vetsState = viewModel.getAllVeterinarians().collectAsState(initial = emptyList())
+                    val doctors = if (vetsState.value.isNotEmpty()) {
+                        vetsState.value.map { "Dr(a). ${it.name} (Veterinario)" }
+                    } else {
+                        listOf("Dr. García (Veterinario)", "Dra. Martínez (Especialista)")
+                    }
+
+                    if (selDoctor.isBlank() || selDoctor !in doctors) {
+                        selDoctor = doctors.firstOrNull() ?: "Dr. García (Veterinario)"
+                    }
+
                     val services = listOf("Baño Completo 🧼", "Corte de Pelo ✂️", "Spa & Masaje 💆")
 
                     val datePickerDialog = DatePickerDialog(context, { _, year, month, day ->
@@ -429,9 +466,11 @@ class MainActivity : ComponentActivity() {
                             }
                         },
                         confirmButton = {
+                            var isSchedulingInDb by remember { mutableStateOf(false) }
                             Button(
-                                enabled = isFormValid,
+                                enabled = isFormValid && !isSchedulingInDb,
                                 onClick = {
+                                    isSchedulingInDb = true
                                     val newAppt = Appointment(
                                         petId = selPetId,
                                         title = if (schedulingType == "MEDICAL") "Consulta Médica" else selService,
@@ -442,13 +481,27 @@ class MainActivity : ComponentActivity() {
                                         type = schedulingType,
                                         doctor = if (schedulingType == "MEDICAL") selDoctor else "Estilista Canino"
                                     )
-                                    viewModel.addAppointment(newAppt)
-                                    showScheduleDialog = false
+                                    viewModel.addAppointment(newAppt) { success ->
+                                        isSchedulingInDb = false
+                                        if (success) {
+                                            showScheduleDialog = false
+                                        }
+                                    }
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = ComposeColor(ContextCompat.getColor(this@MainActivity, currentTheme.primary))),
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier.fillMaxWidth()
-                            ) { Text("CONFIRMAR CITA", fontWeight = FontWeight.Bold) }
+                            ) {
+                                if (isSchedulingInDb) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        CircularProgressIndicator(color = ComposeColor.White, modifier = Modifier.size(18.dp))
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text("Conectando a Base de Datos...", fontWeight = FontWeight.Bold)
+                                    }
+                                } else {
+                                    Text("CONFIRMAR Y GUARDAR CITA", fontWeight = FontWeight.Bold)
+                                }
+                            }
                         },
                         dismissButton = { TextButton(onClick = { showScheduleDialog = false }) { Text("Cancelar") } }
                     )
@@ -456,7 +509,7 @@ class MainActivity : ComponentActivity() {
 
                 val isLoggedIn = user != null
 
-                if (!isLoggedIn && currentScreen != R.layout.screen_styles) {
+                if (!isLoggedIn) {
                     BackHandler(enabled = true) {
                         // Evita salir de la aplicación al presionar el botón Atrás cuando está en la pantalla de Login
                     }
@@ -537,7 +590,7 @@ class MainActivity : ComponentActivity() {
                                     currentTheme = currentTheme,
                                     onAddPetClick = { showAddPetDialog = true },
                                     onEditPetClick = { petToEdit = it },
-                                    onDeletePetClick = { petToDeleteStep1 = it }
+                                    onDeletePetClick = if (user?.role == "VETERINARIAN") ({ pet -> petToDeleteStep1 = pet }) else { _ -> }
                                 )
 
                                 R.layout.screen_bath -> BathScreen(
@@ -562,7 +615,7 @@ class MainActivity : ComponentActivity() {
                                     onEditProfileClick = { showEditProfileDialog = true },
                                     onChangePhotoClick = { imagePicker.launch("image/*") },
                                     onEditPetClick = { petToEdit = it },
-                                    onDeletePetClick = { petToDeleteStep1 = it }
+                                    onDeletePetClick = if (user?.role == "VETERINARIAN") ({ pet -> petToDeleteStep1 = pet }) else { _ -> }
                                 )
 
                                 R.layout.screen_notifications -> NotificationsScreen(

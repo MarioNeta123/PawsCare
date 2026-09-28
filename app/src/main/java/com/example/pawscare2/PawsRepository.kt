@@ -44,6 +44,21 @@ class PawsRepository {
         awaitClose { subscription.remove() }
     }
 
+    fun getAllVeterinarians(): Flow<List<User>> = callbackFlow {
+        val subscription = db.collection("users")
+            .whereEqualTo("role", "VETERINARIAN")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) { close(error); return@addSnapshotListener }
+                if (snapshot != null) {
+                    val list = snapshot.documents.mapNotNull { doc ->
+                        doc.toObject<User>()?.copy(id = doc.id)
+                    }
+                    trySend(list)
+                }
+            }
+        awaitClose { subscription.remove() }
+    }
+
     fun getPets(userId: String): Flow<List<Pet>> = callbackFlow {
         val subscription = db.collection("pets")
             .whereEqualTo("ownerId", userId)
@@ -57,6 +72,37 @@ class PawsRepository {
                 }
             }
         awaitClose { subscription.remove() }
+    }
+
+    fun getPetsForUser(userId: String, role: String): Flow<List<Pet>> = callbackFlow {
+        val subscription = db.collection("pets")
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) { close(error); return@addSnapshotListener }
+                if (snapshot != null) {
+                    val allPets = snapshot.documents.mapNotNull { doc -> doc.toObject<Pet>() }
+                    val filtered = if (role == "VETERINARIAN") {
+                        allPets.filter { it.ownerId == userId || it.assignedVetIds.contains(userId) }
+                    } else {
+                        allPets.filter { it.ownerId == userId }
+                    }
+                    trySend(filtered)
+                }
+            }
+        awaitClose { subscription.remove() }
+    }
+
+    suspend fun assignPetToVet(petId: Long, vetUserId: String) {
+        val docs = db.collection("pets").whereEqualTo("id", petId).get().await()
+        for (doc in docs) {
+            doc.reference.update("assignedVetIds", com.google.firebase.firestore.FieldValue.arrayUnion(vetUserId)).await()
+        }
+    }
+
+    suspend fun removePetFromVet(petId: Long, vetUserId: String) {
+        val docs = db.collection("pets").whereEqualTo("id", petId).get().await()
+        for (doc in docs) {
+            doc.reference.update("assignedVetIds", com.google.firebase.firestore.FieldValue.arrayRemove(vetUserId)).await()
+        }
     }
 
     fun getAllPets(): Flow<List<Pet>> = callbackFlow {

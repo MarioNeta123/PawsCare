@@ -3,6 +3,7 @@ package com.example.pawscare2
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pawscare2.model.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -61,43 +62,85 @@ class PawsViewModel : ViewModel() {
 
     private fun loadDataForUser(userId: String) {
         viewModelScope.launch {
-            repository.getUser(userId).catch { e -> _errorMessage.value = "Error al cargar usuario: ${e.message}" }
-                .collect { userData ->
-                    _user.value = userData
-                    if (userData != null && !userData.welcomeSent) sendWelcomeNotification(userId)
-
-                    if (userData?.role == "VETERINARIAN") {
-                        repository.getAllAppointments().collect { _appointments.value = it }
-                    } else {
-                        repository.getAppointments(userId).collect { _appointments.value = it }
+            try {
+                repository.getUser(userId)
+                    .catch { e ->
+                        if (authManager.getUserId() != null) {
+                            _errorMessage.value = "Error al cargar usuario: ${e.message}"
+                        }
                     }
-                }
+                    .collect { userData ->
+                        if (authManager.getUserId() == null) return@collect
+                        _user.value = userData
+                        if (userData != null && !userData.welcomeSent) sendWelcomeNotification(userId)
+                    }
+            } catch (_: Exception) {}
         }
 
         viewModelScope.launch {
-            repository.getUser(userId).collect { userData ->
-                if (userData?.role == "VETERINARIAN") {
-                    repository.getAllPets().catch { e -> _errorMessage.value = "Error al cargar pacientes: ${e.message}" }
-                        .collect { petList ->
-                            _pets.value = petList
-                            if (_selectedPet.value == null && petList.isNotEmpty()) selectPet(petList.first())
+            try {
+                repository.getUser(userId)
+                    .catch { e ->
+                        if (authManager.getUserId() != null) {
+                            _errorMessage.value = "Error al cargar citas: ${e.message}"
                         }
-                } else {
-                    repository.getPets(userId).catch { e -> _errorMessage.value = "Error al cargar mascotas: ${e.message}" }
-                        .collect { petList ->
-                            _pets.value = petList
-                            if (_selectedPet.value == null && petList.isNotEmpty()) selectPet(petList.first())
+                    }
+                    .collect { userData ->
+                        if (authManager.getUserId() == null) return@collect
+                        val isVet = userData?.role == "VETERINARIAN"
+                        val flow = if (isVet) repository.getAllAppointments() else repository.getAppointments(userId)
+                        flow.catch { apptErr ->
+                            if (authManager.getUserId() != null) {
+                                _errorMessage.value = "Error al cargar citas: ${apptErr.message}"
+                            }
+                        }.collect {
+                            if (authManager.getUserId() == null) return@collect
+                            _appointments.value = it
                         }
-                }
-            }
+                    }
+            } catch (_: Exception) {}
         }
 
         viewModelScope.launch {
-            repository.getNotifications(userId).catch { e -> _errorMessage.value = "Error al cargar notificaciones: ${e.message}" }
-                .collect { notifList ->
-                    _notifications.value = notifList
-                    _unreadCount.value = notifList.count { !it.isRead }
-                }
+            try {
+                repository.getUser(userId)
+                    .catch { e ->
+                        if (authManager.getUserId() != null) {
+                            _errorMessage.value = "Error al cargar pacientes: ${e.message}"
+                        }
+                    }
+                    .collect { userData ->
+                        if (authManager.getUserId() == null) return@collect
+                        val role = userData?.role ?: "CUSTOMER"
+                        repository.getPetsForUser(userId, role)
+                            .catch { petErr ->
+                                if (authManager.getUserId() != null) {
+                                    _errorMessage.value = "Error al cargar pacientes: ${petErr.message}"
+                                }
+                            }
+                            .collect { petList ->
+                                if (authManager.getUserId() == null) return@collect
+                                _pets.value = petList
+                                if (_selectedPet.value == null && petList.isNotEmpty()) selectPet(petList.first())
+                            }
+                    }
+            } catch (_: Exception) {}
+        }
+
+        viewModelScope.launch {
+            try {
+                repository.getNotifications(userId)
+                    .catch { e ->
+                        if (authManager.getUserId() != null) {
+                            _errorMessage.value = "Error al cargar notificaciones: ${e.message}"
+                        }
+                    }
+                    .collect { notifList ->
+                        if (authManager.getUserId() == null) return@collect
+                        _notifications.value = notifList
+                        _unreadCount.value = notifList.count { !it.isRead }
+                    }
+            } catch (_: Exception) {}
         }
     }
 
@@ -136,6 +179,41 @@ class PawsViewModel : ViewModel() {
                 _errorMessage.value = "Error al enviar aviso: ${e.message}"
             }
         }
+    }
+
+    fun assignPetToMyPatients(pet: Pet) {
+        val userId = authManager.getUserId() ?: return
+        viewModelScope.launch {
+            try {
+                repository.assignPetToVet(pet.id, userId)
+                _toastMessage.value = "¡${pet.name} (${pet.getIconEmoji()}) ha sido añadido a tus pacientes asignados! 🩺"
+            } catch (e: Exception) {
+                _errorMessage.value = "Error al añadir paciente: ${e.message}"
+            }
+        }
+    }
+
+    fun removePetFromMyPatients(pet: Pet) {
+        val userId = authManager.getUserId() ?: return
+        viewModelScope.launch {
+            try {
+                repository.removePetFromVet(pet.id, userId)
+                if (_selectedPet.value?.id == pet.id) {
+                    _selectedPet.value = _pets.value.firstOrNull { it.id != pet.id }
+                }
+                _toastMessage.value = "¡${pet.name} ha sido dado de baja de tus pacientes! 🩺"
+            } catch (e: Exception) {
+                _errorMessage.value = "Error al dar de baja al paciente: ${e.message}"
+            }
+        }
+    }
+
+    fun getAllClinicPets(): Flow<List<Pet>> {
+        return repository.getAllPets()
+    }
+
+    fun getAllVeterinarians(): Flow<List<User>> {
+        return repository.getAllVeterinarians()
     }
 
     fun markAsRead(notificationId: String) {
@@ -291,13 +369,31 @@ class PawsViewModel : ViewModel() {
                 repository.updateUserProfile(userId, mapOf("photoUrl" to photoUrl))
                 _toastMessage.value = "¡Foto de perfil actualizada en la base de datos! 📷"
             } catch (e: Exception) {
-                _errorMessage.value = "Error al subir la imagen."
+                _errorMessage.value = "Error al subir la imagen: ${e.localizedMessage ?: e.message}"
+            }
+        }
+    }
+
+    fun removeProfilePhoto() {
+        val userId = authManager.getUserId() ?: return
+        viewModelScope.launch {
+            try {
+                repository.updateUserProfile(userId, mapOf("photoUrl" to ""))
+                _toastMessage.value = "¡Foto de perfil eliminada! Se restauró el avatar por defecto. 👤"
+            } catch (e: Exception) {
+                _errorMessage.value = "Error al eliminar la foto: ${e.message}"
             }
         }
     }
 
     fun logout() {
-        try { authManager.signOut() } catch (e: Exception) { _errorMessage.value = "Error al cerrar sesión." }
+        try {
+            authManager.signOut()
+            clearData()
+            _toastMessage.value = "Sesión cerrada correctamente."
+        } catch (e: Exception) {
+            _errorMessage.value = "Error al cerrar sesión."
+        }
     }
 
     fun addPet(name: String, species: String, breed: String, age: Int, weight: Double, gender: String = "Macho") {
@@ -402,29 +498,49 @@ class PawsViewModel : ViewModel() {
         }
     }
 
-    fun addAppointment(appointment: Appointment) {
-        val userId = authManager.getUserId() ?: return
+    fun addAppointment(appointment: Appointment, onComplete: (Boolean) -> Unit = {}) {
+        val userId = authManager.getUserId()
+        if (userId == null) {
+            _errorMessage.value = "Debes iniciar sesión para agendar una cita."
+            onComplete(false)
+            return
+        }
         viewModelScope.launch {
             try {
                 require(appointment.petId != 0L) { "Debes seleccionar una mascota." }
                 require(appointment.date.isNotBlank() && appointment.hour.isNotBlank()) { "Fecha y hora son obligatorias." }
                 require(appointment.branch.isNotBlank()) { "Debes seleccionar una sucursal." }
 
-                val petName = _pets.value.find { it.id == appointment.petId }?.name ?: "tu mascota"
+                val targetPet = _pets.value.find { it.id == appointment.petId }
+                val petName = targetPet?.name ?: "tu mascota"
                 val updatedAppt = appointment.copy(userId = userId, petName = petName)
-                repository.saveAppointment(updatedAppt)
 
-                val newNotif = Notification(
-                    userId = userId, title = "Cita Agendada: $petName",
-                    message = "Tu cita (${updatedAppt.title}) para el día ${updatedAppt.date} a las ${updatedAppt.hour} ha sido confirmada.",
-                    type = "APPOINTMENT",
-                    date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale("es", "ES")).format(java.util.Calendar.getInstance().time),
-                    hour = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Calendar.getInstance().time)
-                )
-                repository.addNotification(newNotif)
-                _toastMessage.value = "¡Cita agendada y guardada en la base de datos! 📅"
+                // Verifica la conexión efectiva y confirmación con la base de datos de Firestore
+                kotlinx.coroutines.withTimeout(8000L) {
+                    repository.saveAppointment(updatedAppt)
+
+                    val newNotif = Notification(
+                        userId = userId, title = "Cita Agendada: $petName",
+                        message = "Tu cita (${updatedAppt.title}) para el día ${updatedAppt.date} a las ${updatedAppt.hour} ha sido confirmada.",
+                        type = "APPOINTMENT",
+                        date = java.text.SimpleDateFormat("dd MMM yyyy", java.util.Locale("es", "ES")).format(java.util.Calendar.getInstance().time),
+                        hour = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Calendar.getInstance().time)
+                    )
+                    repository.addNotification(newNotif)
+                }
+
+                // Selecciona la mascota y actualiza el estado inmediatamente
+                targetPet?.let { selectPet(it) }
+                _appointments.value = _appointments.value.filter { it.id != updatedAppt.id } + updatedAppt
+
+                _toastMessage.value = "¡Conexión exitosa! Cita guardada en la base de datos. 📅"
+                onComplete(true)
+            } catch (e: kotlinx.coroutines.TimeoutCancellationException) {
+                _errorMessage.value = "Sin conexión a la base de datos: Tiempo de respuesta agotado. La cita NO se agendó."
+                onComplete(false)
             } catch (e: Exception) {
-                _errorMessage.value = "Error al agendar la cita: ${e.message}"
+                _errorMessage.value = "Error al conectar con la base de datos: ${e.message}. La cita NO fue agendada."
+                onComplete(false)
             }
         }
     }

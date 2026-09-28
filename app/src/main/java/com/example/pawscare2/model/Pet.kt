@@ -14,7 +14,8 @@ data class Pet(
     val gender: String = "Macho", // "Macho" o "Hembra"
     val microchip: String = "", // Nº de Microchip / Folio de verificación clínica
     val isVerified: Boolean = true,
-    val photo: Int = 2131230816 // ID de recurso por defecto
+    val photo: Int = 2131230816, // ID de recurso por defecto
+    val assignedVetIds: List<String> = emptyList() // IDs de veterinarios que atienden a este paciente
 ) {
     fun getIconEmoji(): String = when (species.uppercase().trim()) {
         "GATO", "CAT" -> "🐱"

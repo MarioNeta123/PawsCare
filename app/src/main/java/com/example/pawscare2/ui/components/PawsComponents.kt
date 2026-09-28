@@ -29,7 +29,7 @@ import com.example.pawscare2.PawsTheme
 import com.example.pawscare2.R
 import com.example.pawscare2.model.Pet
 
-// Componentes reutilizables de la interfaz de PawsCare con accesibilidad TalkBack
+// Componentes reutilizables de la interfaz de PawsCare con accesibilidad TalkBack simplificada
 @Composable
 fun PawsHeader(
     title: String,
@@ -66,13 +66,17 @@ fun PawsHeader(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.semantics(mergeDescendants = true) {
+                    contentDescription = title
+                }
+            ) {
                 Box(
                     modifier = Modifier
                         .size(42.dp)
                         .clip(CircleShape)
-                        .background(accentBgColor)
-                        .semantics { contentDescription = "Logo PawsCare" },
+                        .background(accentBgColor),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -97,13 +101,13 @@ fun PawsHeader(
                     .clip(CircleShape)
                     .clickable { onNotificationClick() }
                     .padding(8.dp)
-                    .semantics {
-                        contentDescription = if (unreadCount > 0) "Campana de notificaciones. Tienes $unreadCount mensajes sin leer." else "Campana de notificaciones sin mensajes nuevos"
+                    .semantics(mergeDescendants = true) {
+                        contentDescription = if (unreadCount > 0) "Notificaciones, $unreadCount sin leer" else "Notificaciones"
                     }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.icon_main_notifi_false),
-                    contentDescription = "Notificaciones",
+                    contentDescription = null,
                     tint = primaryColor,
                     modifier = Modifier
                         .size(28.dp)
@@ -178,11 +182,13 @@ fun PawsBottomNavigation(
                         .clip(RoundedCornerShape(12.dp))
                         .clickable { onTabSelected(tab.route) }
                         .padding(horizontal = 12.dp, vertical = 6.dp)
-                        .semantics { contentDescription = "Navegar a ${tab.title}. ${if (isSelected) "Pestaña activa" else "Toca para abrir"}" }
+                        .semantics(mergeDescendants = true) {
+                            contentDescription = "${tab.title}${if (isSelected) ", pestaña activa" else ""}"
+                        }
                 ) {
                     Icon(
                         painter = painterResource(id = tab.iconRes),
-                        contentDescription = tab.title,
+                        contentDescription = null,
                         tint = tabColor,
                         modifier = Modifier.size(24.dp)
                     )
@@ -316,7 +322,9 @@ fun PetSelectorRow(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
                     .clickable { onPetSelect(pet) }
-                    .semantics { contentDescription = "Seleccionar mascota ${pet.name}. ${if (isSelected) "Mascota seleccionada actualmente" else ""}" }
+                    .semantics(mergeDescendants = true) {
+                        contentDescription = "Mascota ${pet.name}${if (isSelected) ", seleccionada" else ""}"
+                    }
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -340,7 +348,9 @@ fun PetSelectorRow(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
                     .clickable { onAddPetClick() }
-                    .semantics { contentDescription = "Boton para registrar nueva mascota" }
+                    .semantics(mergeDescendants = true) {
+                        contentDescription = "Registrar nueva mascota"
+                    }
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

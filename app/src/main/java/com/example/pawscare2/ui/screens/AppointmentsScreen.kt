@@ -48,7 +48,7 @@ fun AppointmentsScreen(
     val isVet = user?.role == "VETERINARIAN"
     var selectedTab by remember { mutableIntStateOf(0) } // 0 = Consultas Médicas, 1 = Estética
 
-    val medicalAppts = appointments.filter { it.type == "MEDICAL" && (isVet || it.petId == selectedPet?.id || selectedPet == null) }
+    val medicalAppts = appointments.filter { it.type == "MEDICAL" && (isVet || it.userId == user?.id || it.petId == selectedPet?.id || selectedPet == null) }
     val upcomingAppts = medicalAppts.filter { !it.isPast }
     val historyAppts = medicalAppts.filter { it.isPast }
 

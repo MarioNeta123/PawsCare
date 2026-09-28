@@ -54,8 +54,9 @@ fun HomeScreen(
 
     val isVet = user?.role == "VETERINARIAN"
     var searchQuery by remember { mutableStateOf("") }
+    var showAssignExistingPetDialog by remember { mutableStateOf(false) }
 
-    // Filtrado de pacientes para el veterinario en tiempo real
+    // Filtrado de pacientes asignados para el veterinario en tiempo real
     val filteredPets = if (searchQuery.isBlank()) {
         pets
     } else {
@@ -67,6 +68,92 @@ fun HomeScreen(
         }
     }
 
+    // Diálogo para que el veterinario añada una mascota existente de la clínica a sus pacientes asignados
+    if (showAssignExistingPetDialog) {
+        val allClinicPetsState = viewModel.getAllClinicPets().collectAsState(initial = emptyList())
+        var dialogSearchQuery by remember { mutableStateOf("") }
+
+        val unassignedPets = allClinicPetsState.value.filter { p -> !pets.any { it.id == p.id } }
+        val filteredUnassignedPets = if (dialogSearchQuery.isBlank()) {
+            unassignedPets
+        } else {
+            unassignedPets.filter { p ->
+                p.name.contains(dialogSearchQuery, ignoreCase = true) ||
+                        p.breed.contains(dialogSearchQuery, ignoreCase = true) ||
+                        p.species.contains(dialogSearchQuery, ignoreCase = true) ||
+                        p.microchip.contains(dialogSearchQuery, ignoreCase = true)
+            }
+        }
+
+        AlertDialog(
+            onDismissRequest = { showAssignExistingPetDialog = false },
+            title = { Text("Añadir Mascota a Mis Pacientes", fontWeight = FontWeight.Bold) },
+            text = {
+                Column(
+                    modifier = Modifier.heightIn(max = 480.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    if (unassignedPets.isEmpty()) {
+                        Text("No hay más mascotas en el registro global de la clínica para añadir.", color = Color.Gray, fontSize = 14.sp)
+                    } else {
+                        OutlinedTextField(
+                            value = dialogSearchQuery,
+                            onValueChange = { dialogSearchQuery = it },
+                            label = { Text("🔍 Buscar por Nombre, Raza, Folio") },
+                            singleLine = true,
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        if (filteredUnassignedPets.isEmpty()) {
+                            Text("No se encontraron mascotas con ese criterio.", color = Color.Gray, fontSize = 13.sp)
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier.heightIn(max = 300.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                items(filteredUnassignedPets) { clinicPet ->
+                                    Card(
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F3F5)),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                viewModel.assignPetToMyPatients(clinicPet)
+                                                showAssignExistingPetDialog = false
+                                            }
+                                            .padding(vertical = 2.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(12.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(clinicPet.getIconEmoji(), fontSize = 20.sp)
+                                            Spacer(modifier = Modifier.width(10.dp))
+                                            Column(modifier = Modifier.weight(1f)) {
+                                                Text(clinicPet.name, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = primaryColor)
+                                                Text("${clinicPet.breed} • ${clinicPet.age} años • ${clinicPet.weight} kg", fontSize = 12.sp, color = Color.Gray)
+                                                if (clinicPet.microchip.isNotBlank()) {
+                                                    Text("Folio: ${clinicPet.microchip}", fontSize = 10.sp, color = Color.Gray)
+                                                }
+                                            }
+                                            Text("Añadir ➕", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = accentColor)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showAssignExistingPetDialog = false }) { Text("Cerrar") }
+            }
+        )
+    }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -74,14 +161,24 @@ fun HomeScreen(
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
         item {
+            val greetingSubText = if (pets.isEmpty()) {
+                if (isVet) "Aún no tienes pacientes asignados 🐾" else "Registra a tu peludo para comenzar 🐾"
+            } else {
+                "${selectedPet?.name ?: "Tu mascota"} te está saludando 🐾"
+            }
+
             // Banner superior de saludo
             Card(
                 shape = RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
                 colors = CardDefaults.cardColors(containerColor = primaryColor),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .semantics {
-                        contentDescription = if (isVet) "Panel del Doctor ${user?.name ?: ""}" else "Saludo principal para ${user?.name ?: ""}"
+                    .semantics(mergeDescendants = true) {
+                        contentDescription = if (isVet) {
+                            "Panel del Doctor ${user?.name ?: ""}. $greetingSubText"
+                        } else {
+                            "Hola ${user?.name ?: ""}. $greetingSubText"
+                        }
                     }
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
@@ -102,7 +199,7 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
-                        text = if (pets.isEmpty()) "Registra a tu peludo para comenzar 🐾" else "${selectedPet?.name ?: "Tu mascota"} te manda un saludo 🐾",
+                        text = greetingSubText,
                         style = MaterialTheme.typography.bodyMedium.copy(color = Color.White.copy(alpha = 0.9f))
                     )
                 }
@@ -136,7 +233,7 @@ fun HomeScreen(
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("${pets.size}", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = primaryColor)
-                                Text("Pacientes 🐾", fontSize = 11.sp, color = Color.Gray)
+                                Text("Mis Pacientes 🐾", fontSize = 11.sp, color = Color.Gray)
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("${notifications.size}", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = primaryColor)
@@ -146,19 +243,30 @@ fun HomeScreen(
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // Buscador de Pacientes en la Base de Datos
+                        // Buscador de Pacientes Asignados
                         OutlinedTextField(
                             value = searchQuery,
                             onValueChange = { searchQuery = it },
-                            label = { Text("🔍 Buscar Paciente (Nombre, Raza, Folio)") },
+                            label = { Text("🔍 Buscar en Mis Pacientes") },
                             singleLine = true,
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .semantics { contentDescription = "Buscador de pacientes clínicos por nombre, raza o microchip" }
+                                .semantics { contentDescription = "Buscador de pacientes asignados por nombre, raza o microchip" }
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
+
+                        Button(
+                            onClick = { showAssignExistingPetDialog = true },
+                            colors = ButtonDefaults.buttonColors(containerColor = primaryColor),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("➕ Añadir Mascota Existente a Mis Pacientes", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                        }
+
+                        Spacer(modifier = Modifier.height(6.dp))
 
                         Button(
                             onClick = onAddPetClick,
@@ -166,7 +274,7 @@ fun HomeScreen(
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("➕ Registrar Nuevo Paciente en Clínica", color = accentColor, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text("➕ Registrar Nueva Mascota en la Clínica", color = accentColor, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
                     }
                 }
@@ -176,7 +284,7 @@ fun HomeScreen(
         item {
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = if (isVet) "Pacientes de la Clínica (${filteredPets.size}) 🐾" else "Tus Mascotas",
+                text = if (isVet) "Mis Pacientes Asignados (${filteredPets.size}) 🐾" else "Tus Mascotas",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
                     color = primaryColor
@@ -186,11 +294,13 @@ fun HomeScreen(
 
             if (pets.isEmpty()) {
                 EmptyStateCard(
-                    title = "¡Aún no tienes mascotas registradas!",
-                    description = "Agrega a tu perro o gato para llevar el control de citas, estética y cartilla médica.",
-                    buttonText = "Registrar Mascota",
+                    title = if (isVet) "¡Aún no tienes pacientes asignados!" else "¡Aún no tienes mascotas registradas!",
+                    description = if (isVet) "Añade una mascota existente de la clínica o registra una nueva para comenzar a atenderla." else "Agrega a tu perro o gato para llevar el control de citas, estética y cartilla médica.",
+                    buttonText = if (isVet) "Añadir Paciente Existente" else "Registrar Mascota",
                     currentTheme = currentTheme,
-                    onButtonClick = onAddPetClick
+                    onButtonClick = if (isVet) ({ showAssignExistingPetDialog = true }) else onAddPetClick,
+                    secondaryButtonText = if (isVet) "Registrar Nueva" else null,
+                    onSecondaryButtonClick = if (isVet) onAddPetClick else null
                 )
             } else {
                 PetSelectorRow(

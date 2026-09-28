@@ -51,9 +51,30 @@ fun PetCardScreen(
     val pendingProcs = procedures.filter { !it.isCompleted }
 
     var showAddProcedureDialog by remember { mutableStateOf(false) }
+    var showUnassignDialog by remember { mutableStateOf(false) }
     var procName by remember { mutableStateOf("") }
     var procDoctor by remember { mutableStateOf("") }
     var procDate by remember { mutableStateOf("") }
+
+    if (showUnassignDialog && selectedPet != null) {
+        AlertDialog(
+            onDismissRequest = { showUnassignDialog = false },
+            title = { Text("Dar Paciente de Baja", fontWeight = FontWeight.Bold) },
+            text = { Text("¿Estás seguro de que deseas dar de baja a ${selectedPet.name} de tu lista de pacientes asignados? La mascota seguirá registrada en el sistema general de la clínica.") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.removePetFromMyPatients(selectedPet)
+                        showUnassignDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F))
+                ) { Text("Sí, Dar de Baja", color = Color.White, fontWeight = FontWeight.Bold) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showUnassignDialog = false }) { Text("Cancelar") }
+            }
+        )
+    }
 
     if (showAddProcedureDialog && selectedPet != null) {
         AlertDialog(
@@ -218,6 +239,14 @@ fun PetCardScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text("Añadir Procedimiento Médico", color = accentColor, fontWeight = FontWeight.Bold)
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            OutlinedButton(
+                                onClick = { showUnassignDialog = true },
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text("Dar paciente de baja", color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold)
                             }
                         }
                     }
