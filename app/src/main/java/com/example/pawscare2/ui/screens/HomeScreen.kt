@@ -183,7 +183,7 @@ fun HomeScreen(
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     Text(
-                        text = if (isVet) "¡Hola, Dr(a). ${user?.name ?: "Veterinario"}!" else "¡Hola, ${user?.name ?: "Usuario"}!",
+                        text = if (isVet) "¡Hola, Dr. ${user?.name ?: "Veterinario"}!" else "¡Hola, ${user?.name ?: "Usuario"}!",
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
                             color = Color.White

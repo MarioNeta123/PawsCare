@@ -342,7 +342,7 @@ class MainActivity : ComponentActivity() {
                     val branches = listOf("Sucursal Norte 📍", "Sucursal Sur 📍", "Sucursal Centro 📍")
                     val vetsState = viewModel.getAllVeterinarians().collectAsState(initial = emptyList())
                     val doctors = if (vetsState.value.isNotEmpty()) {
-                        vetsState.value.map { "Dr(a). ${it.name} (Veterinario)" }
+                        vetsState.value.map { "Dr. ${it.name} (Veterinario)" }
                     } else {
                         listOf("Dr. García (Veterinario)", "Dra. Martínez (Especialista)")
                     }
@@ -352,6 +352,10 @@ class MainActivity : ComponentActivity() {
                     }
 
                     val services = listOf("Baño Completo 🧼", "Corte de Pelo ✂️", "Spa & Masaje 💆")
+
+                    if (selService.isBlank() || selService !in services) {
+                        selService = services.firstOrNull() ?: "Baño Completo 🧼"
+                    }
 
                     val datePickerDialog = DatePickerDialog(context, { _, year, month, day ->
                         val cal = Calendar.getInstance().apply { set(year, month, day) }
@@ -370,7 +374,12 @@ class MainActivity : ComponentActivity() {
                         }
                     }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false)
 
-                    val isFormValid by remember { derivedStateOf { selPetId != 0L && selBranch.isNotBlank() && selDate.isNotBlank() && selHour.isNotBlank() } }
+                    val isFormValid by remember {
+                        derivedStateOf {
+                            selPetId != 0L && selBranch.isNotBlank() && selDate.isNotBlank() && selHour.isNotBlank() &&
+                                (schedulingType == "MEDICAL" || selService.isNotBlank())
+                        }
+                    }
 
                     AlertDialog(
                         onDismissRequest = { showScheduleDialog = false },

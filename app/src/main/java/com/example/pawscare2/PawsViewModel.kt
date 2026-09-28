@@ -23,6 +23,24 @@ class PawsViewModel : ViewModel() {
 
     private val _appointments = MutableStateFlow<List<Appointment>>(emptyList())
     val appointments: StateFlow<List<Appointment>> = _appointments.asStateFlow()
+    private var allAppointmentsCache: List<Appointment> = emptyList()
+
+    private fun updateAppointments() {
+        val userVal = _user.value
+        val isVet = userVal?.role == "VETERINARIAN"
+        val userId = authManager.getUserId() ?: ""
+
+        if (isVet) {
+            val vetPetIds = _pets.value.map { it.id }.toSet()
+            _appointments.value = if (vetPetIds.isEmpty()) {
+                allAppointmentsCache.filter { it.userId == userId }
+            } else {
+                allAppointmentsCache.filter { it.petId in vetPetIds || it.userId == userId }
+            }
+        } else {
+            _appointments.value = allAppointmentsCache
+        }
+    }
 
     private val _procedures = MutableStateFlow<List<Procedure>>(emptyList())
     val procedures: StateFlow<List<Procedure>> = _procedures.asStateFlow()
@@ -72,6 +90,7 @@ class PawsViewModel : ViewModel() {
                     .collect { userData ->
                         if (authManager.getUserId() == null) return@collect
                         _user.value = userData
+                        updateAppointments()
                         if (userData != null && !userData.welcomeSent) sendWelcomeNotification(userId)
                     }
             } catch (_: Exception) {}
@@ -93,9 +112,10 @@ class PawsViewModel : ViewModel() {
                             if (authManager.getUserId() != null) {
                                 _errorMessage.value = "Error al cargar citas: ${apptErr.message}"
                             }
-                        }.collect {
+                        }.collect { apptList ->
                             if (authManager.getUserId() == null) return@collect
-                            _appointments.value = it
+                            allAppointmentsCache = apptList
+                            updateAppointments()
                         }
                     }
             } catch (_: Exception) {}
@@ -121,6 +141,7 @@ class PawsViewModel : ViewModel() {
                             .collect { petList ->
                                 if (authManager.getUserId() == null) return@collect
                                 _pets.value = petList
+                                updateAppointments()
                                 if (_selectedPet.value == null && petList.isNotEmpty()) selectPet(petList.first())
                             }
                     }
@@ -150,7 +171,7 @@ class PawsViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 repository.updateUserProfile(u.id, mapOf("role" to newRole))
-                _toastMessage.value = if (newRole == "VETERINARIAN") "¡Modo Veterinario Activado (Dr(a). ${u.name})! 🩺" else "¡Modo Cliente Activado! 🐶"
+                _toastMessage.value = if (newRole == "VETERINARIAN") "¡Modo Veterinario Activado (Dr. ${u.name})! 🩺" else "¡Modo Cliente Activado! 🐶"
             } catch (e: Exception) {
                 _errorMessage.value = "Error al cambiar de rol: ${e.message}"
             }
@@ -284,16 +305,25 @@ class PawsViewModel : ViewModel() {
     fun login(email: String, pass: String, onResult: (Boolean, String?) -> Unit) {
         val cleanEmail = email.trim()
         if (cleanEmail.isBlank() || pass.isBlank()) {
-            _errorMessage.value = "Correo y contraseña son obligatorios."
+            val msg = "Correo y contraseña son obligatorios."
+            _errorMessage.value = msg
+            onResult(false, msg)
             return
         }
         try {
             validateEmail(cleanEmail)
         } catch (e: Exception) {
-            _errorMessage.value = e.message
+            val msg = e.message ?: "Formato de correo electrónico incorrecto."
+            _errorMessage.value = msg
+            onResult(false, msg)
             return
         }
-        authManager.signIn(cleanEmail, pass, onResult)
+        authManager.signIn(cleanEmail, pass) { success, error ->
+            if (!success && error != null) {
+                _errorMessage.value = error
+            }
+            onResult(success, error)
+        }
     }
 
     fun register(email: String, pass: String, name: String, role: String = "CUSTOMER", clinicCode: String = "", onResult: (Boolean, String?) -> Unit) {
@@ -302,24 +332,32 @@ class PawsViewModel : ViewModel() {
         val cleanClinicCode = clinicCode.trim().uppercase()
 
         if (cleanEmail.isBlank() || pass.isBlank() || cleanName.isBlank()) {
-            _errorMessage.value = "Todos los campos son obligatorios."
+            val msg = "Todos los campos son obligatorios."
+            _errorMessage.value = msg
+            onResult(false, msg)
             return
         }
         try {
             validateEmail(cleanEmail)
         } catch (e: Exception) {
-            _errorMessage.value = e.message
+            val msg = e.message ?: "Formato de correo electrónico incorrecto."
+            _errorMessage.value = msg
+            onResult(false, msg)
             return
         }
         if (pass.length < 6) {
-            _errorMessage.value = "La contraseña debe tener al menos 6 caracteres."
+            val msg = "La contraseña debe tener al menos 6 caracteres."
+            _errorMessage.value = msg
+            onResult(false, msg)
             return
         }
 
         if (role == "VETERINARIAN") {
             val validCodes = listOf("VET2026", "PAWS-VET", "PAWS2026")
             if (cleanClinicCode !in validCodes && !cleanClinicCode.startsWith("CED-")) {
-                _errorMessage.value = "Código de autorización clínica no válido. Solicita el código VET2026 a la administración."
+                val msg = "Cédula o código de veterinario incorrecto. Debe ser un código válido (ej. VET2026) o empezar con CED-."
+                _errorMessage.value = msg
+                onResult(false, msg)
                 return
             }
         }
@@ -336,6 +374,10 @@ class PawsViewModel : ViewModel() {
                             _errorMessage.value = "Cuenta creada, pero hubo un error guardando el perfil."
                         }
                     }
+                }
+            } else {
+                if (error != null) {
+                    _errorMessage.value = error
                 }
             }
             onResult(success, error)
@@ -531,7 +573,6 @@ class PawsViewModel : ViewModel() {
 
                 // Selecciona la mascota y actualiza el estado inmediatamente
                 targetPet?.let { selectPet(it) }
-                _appointments.value = _appointments.value.filter { it.id != updatedAppt.id } + updatedAppt
 
                 _toastMessage.value = "¡Conexión exitosa! Cita guardada en la base de datos. 📅"
                 onComplete(true)
